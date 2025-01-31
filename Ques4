@@ -1,0 +1,55 @@
+Q4)  Use the above function and store the 100 numbers in a list
+. • Perform merge sort as usual
+ • Use Batch Processing we did in the above exercises
+ • Can you try to attempt MapReduce Paradigm for this ?
+ Ans)  
+import random
+from functools import reduce
+
+def generate_random_numbers():
+    random_numbers = []
+    for _ in range(100):
+        random_numbers.append(random.randint(1, 100))
+    return random_numbers
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)
+
+def merge(left, right):
+    sorted_arr = []
+    while left and right:
+        if left[0] < right[0]:
+            sorted_arr.append(left.pop(0))
+        else:
+            sorted_arr.append(right.pop(0))
+    sorted_arr.extend(left)
+    sorted_arr.extend(right)
+    return sorted_arr
+
+def batch_process(arr, batch_size=25):
+    batches = [arr[i:i + batch_size] for i in range(0, len(arr), batch_size)]
+    sorted_batches = [merge_sort(batch) for batch in batches]
+    return sorted_batches
+
+def map_phase(arr, batch_size=25):
+    batches = [arr[i:i + batch_size] for i in range(0, len(arr), batch_size)]
+    return [merge_sort(batch) for batch in batches]
+
+def reduce_phase(sorted_batches):
+    return reduce(lambda x, y: merge(x, y), sorted_batches)
+
+random_numbers = generate_random_numbers()
+sorted_numbers = merge_sort(random_numbers)
+batches = batch_process(random_numbers)
+mapped_batches = map_phase(random_numbers)
+sorted_numbers_mapreduce = reduce_phase(mapped_batches)
+
+print("Unsorted numbers:", random_numbers[:10])
+print("Sorted numbers:", sorted_numbers[:10])
+print("Sorted batches:", batches[:2])
+print("Sorted numbers (MapReduce):", sorted_numbers_mapreduce[:10])
