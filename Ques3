@@ -1,0 +1,16 @@
+Q3) Write a function which generates 100 random numbers. Use both return and yield, explain what you observe?
+Ans) import random
+
+# Using return
+def generate_numbers_return():
+    numbers = [random.randint(1, 100) for _ in range(100)]
+    return numbers  # Returns the entire list at once
+
+# Using yield
+def generate_numbers_yield():
+    for _ in range(100):
+        yield random.randint(1, 100)  # Yields one value at a time
+
+# Observations:
+# - `return` stores all numbers in memory before returning, leading to higher memory usage.
+# - `yield` generates numbers one by one, which is more memory-efficient for large datasets.
